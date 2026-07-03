@@ -1,12 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const { kv } = require('@vercel/kv');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// In-memory data store for the demo (Note: Vercel resets this after ~15 mins of inactivity)
-const rooms = [
+const defaultRooms = [
     { roomNumber: "101", category: "Deluxe", bookings: [], basePrice: 150 },
     { roomNumber: "102", category: "Deluxe", bookings: [], basePrice: 150 },
     { roomNumber: "201", category: "Suite", bookings: [], basePrice: 300 },
@@ -19,6 +19,28 @@ const rooms = [
     { roomNumber: "701", category: "Standard", bookings: [], basePrice: 50 },
     { roomNumber: "702", category: "Economy", bookings: [], basePrice: 40 },
 ];
+
+async function getRooms() {
+    try {
+        let rooms = await kv.get('hotel_rooms');
+        if (!rooms) {
+            await kv.set('hotel_rooms', defaultRooms);
+            rooms = defaultRooms;
+        }
+        return rooms;
+    } catch (e) {
+        console.error("KV Error, falling back to default rooms", e);
+        return defaultRooms;
+    }
+}
+
+async function updateRooms(rooms) {
+    try {
+        await kv.set('hotel_rooms', rooms);
+    } catch (e) {
+        console.error("KV Error saving rooms", e);
+    }
+}
 
 function isAvailable(room, checkIn, checkOut) {
     const inDate = new Date(checkIn);
@@ -33,12 +55,13 @@ function isAvailable(room, checkIn, checkOut) {
     return true;
 }
 
-app.get('/api/availability', (req, res) => {
+app.get('/api/availability', async (req, res) => {
     const { category, checkIn, checkOut } = req.query;
     if (!checkIn || !checkOut) {
         return res.status(400).json({ error: "Missing dates" });
     }
     
+    let rooms = await getRooms();
     let availableRooms = rooms.filter(r => isAvailable(r, checkIn, checkOut));
     
     if (category) {
@@ -51,8 +74,9 @@ app.get('/api/availability', (req, res) => {
     });
 });
 
-app.post('/api/book', (req, res) => {
+app.post('/api/book', async (req, res) => {
     const { category, checkIn, checkOut } = req.body;
+    let rooms = await getRooms();
     let availableRooms = rooms.filter(r => isAvailable(r, checkIn, checkOut));
     
     if (category) {
@@ -60,20 +84,23 @@ app.post('/api/book', (req, res) => {
     }
     
     if (availableRooms.length > 0) {
-        const room = availableRooms[0];
-        room.bookings.push({ checkIn, checkOut });
+        const roomToBook = availableRooms[0];
+        const roomIndex = rooms.findIndex(r => r.roomNumber === roomToBook.roomNumber);
+        
+        rooms[roomIndex].bookings.push({ checkIn, checkOut });
+        await updateRooms(rooms);
         
         const inDate = new Date(checkIn);
         const outDate = new Date(checkOut);
         const days = Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24)) || 1;
-        const totalTariff = room.basePrice * days;
+        const totalTariff = roomToBook.basePrice * days;
         
         const bookingId = "BKG-" + Math.floor(Math.random() * 1000000);
         
         res.json({
             success: true,
             bookingId: bookingId,
-            roomNumber: room.roomNumber,
+            roomNumber: roomToBook.roomNumber,
             totalTariff: totalTariff
         });
     } else {
@@ -86,12 +113,10 @@ app.post('/api/send-otp', (req, res) => {
     res.json({ success: true, message: "OTP sent to " + phone });
 });
 
-// For local testing
 if (require.main === module) {
     app.listen(8085, () => {
         console.log("Vercel Mock Backend running on http://localhost:8085");
     });
 }
 
-// Export for Vercel
 module.exports = app;
