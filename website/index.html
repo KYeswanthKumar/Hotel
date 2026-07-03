@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grand Hotel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if (!localStorage.getItem('isAuthenticated')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">The Grand Hotel</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#rooms">Rooms</a></li>
+            <li><a href="#amenities">Amenities</a></li>
+            <li>
+                <select id="currency-selector" onchange="changeCurrency()"
+                    style="background:var(--dark); color:var(--light); border:1px solid var(--primary); border-radius:4px; padding:0.4rem; font-family:'Outfit'; outline:none; cursor:pointer;">
+                    <option value="USD" data-symbol="$" data-rate="1">🇺🇸 USD ($)</option>
+                    <option value="EUR" data-symbol="€" data-rate="0.92">🇪🇺 EUR (€)</option>
+                    <option value="GBP" data-symbol="£" data-rate="0.79">🇬🇧 GBP (£)</option>
+                    <option value="INR" data-symbol="₹" data-rate="83.50">🇮🇳 INR (₹)</option>
+                    <option value="JPY" data-symbol="¥" data-rate="151.20">🇯🇵 JPY (¥)</option>
+                    <option value="AUD" data-symbol="A$" data-rate="1.52">🇦🇺 AUD (A$)</option>
+                    <option value="CAD" data-symbol="C$" data-rate="1.36">🇨🇦 CAD (C$)</option>
+                    <option value="CHF" data-symbol="CHF" data-rate="0.91">🇨🇭 CHF (CHF)</option>
+                    <option value="CNY" data-symbol="¥" data-rate="7.24">🇨🇳 CNY (¥)</option>
+                    <option value="SEK" data-symbol="kr" data-rate="10.83">🇸🇪 SEK (kr)</option>
+                    <option value="NZD" data-symbol="NZ$" data-rate="1.67">🇳🇿 NZD (NZ$)</option>
+                    <option value="MXN" data-symbol="$" data-rate="16.50">🇲🇽 MXN ($)</option>
+                    <option value="SGD" data-symbol="S$" data-rate="1.35">🇸🇬 SGD (S$)</option>
+                    <option value="HKD" data-symbol="HK$" data-rate="7.83">🇭🇰 HKD (HK$)</option>
+                    <option value="NOK" data-symbol="kr" data-rate="10.98">🇳🇴 NOK (kr)</option>
+                    <option value="KRW" data-symbol="₩" data-rate="1350.0">🇰🇷 KRW (₩)</option>
+                    <option value="TRY" data-symbol="₺" data-rate="32.0">🇹🇷 TRY (₺)</option>
+                    <option value="RUB" data-symbol="₽" data-rate="92.5">🇷🇺 RUB (₽)</option>
+                    <option value="BRL" data-symbol="R$" data-rate="5.12">🇧🇷 BRL (R$)</option>
+                    <option value="ZAR" data-symbol="R" data-rate="18.7">🇿🇦 ZAR (R)</option>
+                    <option value="AED" data-symbol="د.إ" data-rate="3.67">🇦🇪 AED (د.إ)</option>
+                    <option value="SAR" data-symbol="﷼" data-rate="3.75">🇸🇦 SAR (﷼)</option>
+                </select>
+            </li>
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="#booking" class="btn-book">Book Now</a></li>
+        </ul>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>Experience Unparalleled Luxury</h1>
+            <p>Your perfect escape in the heart of the city.</p>
+            <a href="#rooms" class="btn-primary">Explore Rooms</a>
+        </div>
+    </header>
+
+    <section id="booking" class="booking-section">
+        <div class="booking-container">
+            <form id="booking-form" class="booking-form">
+                <div class="form-group">
+                    <label for="checkin">Check-in</label>
+                    <input type="date" id="checkin" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkout">Check-out</label>
+                    <input type="date" id="checkout" required>
+                </div>
+                <div class="form-group">
+                    <label for="guests">Guests</label>
+                    <select id="guests">
+                        <option value="1">1 Adult</option>
+                        <option value="2">2 Adults</option>
+                        <option value="3">3 Adults</option>
+                        <option value="4">4 Adults</option>
+                        <option value="5">5 Adults</option>
+                        <option value="6">6 Adults</option>
+                        <option value="7">7 Adults</option>
+                        <option value="8">8 Adults</option>
+                        <option value="9">9 Adults</option>
+                        <option value="10">10 Adults</option>
+                        <option value="30">Up to 30 Guests (Event)</option>
+                        <option value="50">Up to 50 Guests (Event)</option>
+                        <option value="100">Up to 100 Guests (Event)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary btn-search">Check Availability</button>
+            </form>
+            <div id="booking-message" class="hidden"></div>
+        </div>
+    </section>
+
+    <section id="rooms" class="rooms-section">
+        <div class="section-title">
+            <h2>Our Signature Rooms</h2>
+            <p>Designed for comfort and elegance.</p>
+        </div>
+
+        <div class="room-grid">
+            <div class="room-card">
+                <div class="room-img" style="background-image: url('assets/deluxe_room.png');"></div>
+                <div class="room-info">
+                    <h3>Deluxe Room</h3>
+                    <p style="color:var(--primary); font-weight:bold; margin-bottom:0.5rem;"><i
+                            class="fas fa-user-friends"></i> Up to 2 Adults</p>
+                    <p>Experience pure comfort in our beautifully appointed deluxe rooms with city views.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> King Bed</span>
+                        <span><i class="fas fa-wifi"></i> Free Wi-Fi</span>
+                        <span><i class="fas fa-tv"></i> Smart TV</span>
+                    </div>
+                    <div class="room-price">
+                        <span class="price">$200</span> / night
+                        <button class="btn-secondary" onclick="bookRoom('Deluxe')">Select</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card">
+                <div class="room-img" style="background-image: url('assets/suite_room.png');"></div>
+                <div class="room-info">
+                    <h3>Grand Suite</h3>
+                    <p style="color:var(--primary); font-weight:bold; margin-bottom:0.5rem;"><i
+                            class="fas fa-users"></i> Up to 3 Adults</p>
+                    <p>Our spacious suites offer a separate living area, premium finishes, and stunning panoramas.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> King Bed</span>
+                        <span><i class="fas fa-bath"></i> Deep Tub</span>
+                        <span><i class="fas fa-glass-cheers"></i> Mini Bar</span>
+                    </div>
+                    <div class="room-price">
+                        <span class="price">$500</span> / night
+                        <button class="btn-secondary" onclick="bookRoom('Suite')">Select</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card">
+                <div class="room-img" style="background-image: url('assets/hero_hotel.png');"></div>
+                <div class="room-info">
+                    <h3>Family Suite</h3>
+                    <p style="color:var(--primary); font-weight:bold; margin-bottom:0.5rem;"><i
+                            class="fas fa-users"></i> Up to 4 Adults</p>
+                    <p>Perfect for families, featuring two interconnected bedrooms and a large living space.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> 2 King Beds</span>
+                        <span><i class="fas fa-gamepad"></i> Console</span>
+                        <span><i class="fas fa-utensils"></i> Dining Area</span>
+                    </div>
+                    <div class="room-price">
+                        <span class="price">$800</span> / night
+                        <button class="btn-secondary" onclick="bookRoom('Family')">Select</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card">
+                <div class="room-img" style="background-image: url('assets/dining_hero.png');"></div>
+                <div class="room-info">
+                    <h3>Presidential Penthouse</h3>
+                    <p style="color:var(--primary); font-weight:bold; margin-bottom:0.5rem;"><i
+                            class="fas fa-users"></i> Up to 10 Adults</p>
+                    <p>The ultimate luxury group experience featuring private pool, terrace, and 5 master suites.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> 5 King Beds</span>
+                        <span><i class="fas fa-swimming-pool"></i> Pvt Pool</span>
+                        <span><i class="fas fa-concierge-bell"></i> Pvt Butler</span>
+                    </div>
+                    <div class="room-price">
+                        <span class="price">$3500</span> / night
+                        <button class="btn-secondary" onclick="bookRoom('Penthouse')">Select</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card">
+                <div class="room-img" style="background-image: url('assets/deluxe_room.png');"></div>
+                <div class="room-info">
+                    <h3>Standard Room</h3>
+                    <p style="color:var(--primary); font-weight:bold; margin-bottom:0.5rem;"><i
+                            class="fas fa-bed"></i> Up to 2 Adults</p>
+                    <p>A cozy, budget-friendly room with all essential amenities.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> 1 Queen Bed</span>
+                        <span><i class="fas fa-wifi"></i> Free Wi-Fi</span>
+                        <span><i class="fas fa-tv"></i> TV</span>
+                    </div>
+                    <div class="room-price">
+                        <span class="price">$50</span> / night
+                        <button class="btn-secondary" onclick="bookRoom('Standard')">Select</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card">
+                <div class="room-img" style="background-image: url('assets/deluxe_room.png');"></div>
+                <div class="room-info">
+                    <h3>Economy Room</h3>
+                    <p style="color:var(--primary); font-weight:bold; margin-bottom:0.5rem;"><i
+                            class="fas fa-bed"></i> 1 Adult</p>
+                    <p>Compact and affordable, perfect for solo travelers.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> 1 Twin Bed</span>
+                        <span><i class="fas fa-wifi"></i> Free Wi-Fi</span>
+                        <span><i class="fas fa-shower"></i> Ensuite</span>
+                    </div>
+                    <div class="room-price">
+                        <span class="price">$40</span> / night
+                        <button class="btn-secondary" onclick="bookRoom('Economy')">Select</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="amenities" class="amenities-section">
+        <div class="section-title">
+            <h2>World-Class Amenities</h2>
+            <p>Elevate your stay with our signature luxury experiences.</p>
+        </div>
+
+        <div class="amenities-grid">
+            <a href="pool.html" class="amenity-link">
+                <div class="amenity-card">
+                    <i class="fas fa-swimming-pool"></i>
+                    <h3>Rooftop Infinity Pool</h3>
+                    <p>Enjoy breathtaking skyline views while relaxing in our temperature-controlled infinity pool.</p>
+                </div>
+            </a>
+            <a href="spa.html" class="amenity-link">
+                <div class="amenity-card">
+                    <i class="fas fa-spa"></i>
+                    <h3>Holistic Wellness Spa</h3>
+                    <p>Rejuvenate your mind and body with our exclusive signature treatments and therapies.</p>
+                </div>
+            </a>
+            <a href="dining.html" class="amenity-link">
+                <div class="amenity-card">
+                    <i class="fas fa-utensils"></i>
+                    <h3>Michelin-Star Dining</h3>
+                    <p>Savor exquisite culinary creations by world-renowned chefs in an elegant setting.</p>
+                </div>
+            </a>
+            <a href="butler.html" class="amenity-link">
+                <div class="amenity-card">
+                    <i class="fas fa-concierge-bell"></i>
+                    <h3>24/7 Personal Butler</h3>
+                    <p>Experience unmatched personalized service catering to your every need, any time.</p>
+                </div>
+            </a>
+            <a href="chauffeur.html" class="amenity-link">
+                <div class="amenity-card">
+                    <i class="fas fa-car"></i>
+                    <h3>Chauffeur Service</h3>
+                    <p>Travel in style with our premium fleet of luxury vehicles and private chauffeurs.</p>
+                </div>
+            </a>
+            <a href="tech.html" class="amenity-link">
+                <div class="amenity-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Smart Room Tech</h3>
+                    <p>Control lighting, temperature, and entertainment effortlessly from your personal device.</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo">Grand Boutique</div>
+            <p>123 Luxury Avenue, Metropolis</p>
+            <p>contact@grandboutique.com | +1 234 567 8900</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

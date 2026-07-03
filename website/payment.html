@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | The Grand Boutique</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if (!localStorage.getItem('isAuthenticated')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <style>
+        .payment-section {
+            padding: 8rem 5%;
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .payment-container {
+            background: var(--dark);
+            padding: 3rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+        }
+        .payment-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .payment-header h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .summary-box {
+            background: rgba(0,0,0,0.5);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+        .summary-box p {
+            margin-bottom: 0.5rem;
+            color: #ddd;
+            font-size: 1.1rem;
+        }
+        .summary-box strong {
+            color: var(--primary);
+        }
+        .pay-form-group {
+            margin-bottom: 1.5rem;
+        }
+        .pay-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .pay-form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+            border-radius: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+        }
+        .pay-form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .row {
+            display: flex;
+            gap: 1rem;
+        }
+        .row .pay-form-group {
+            flex: 1;
+        }
+        #payment-message {
+            margin-top: 1rem;
+        }
+        .payment-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .method-card {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+        .method-card:hover {
+            border-color: var(--primary);
+            background: rgba(203, 160, 82, 0.1);
+        }
+        .method-card i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        .method-card h3 {
+            margin: 0;
+            color: var(--light);
+            font-size: 1.2rem;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        .back-btn:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="background: var(--dark);">
+        <div class="logo">Grand Boutique</div>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#rooms">Rooms</a></li>
+            <li>
+                <select id="currency-selector" onchange="changeCurrency()" style="background:var(--dark); color:var(--light); border:1px solid var(--primary); border-radius:4px; padding:0.4rem; font-family:'Outfit'; outline:none; cursor:pointer;">
+                    <option value="USD" data-symbol="$" data-rate="1">🇺🇸 USD ($)</option>
+                    <option value="EUR" data-symbol="€" data-rate="0.92">🇪🇺 EUR (€)</option>
+                    <option value="GBP" data-symbol="£" data-rate="0.79">🇬🇧 GBP (£)</option>
+                    <option value="INR" data-symbol="₹" data-rate="83.50">🇮🇳 INR (₹)</option>
+                    <option value="JPY" data-symbol="¥" data-rate="151.20">🇯🇵 JPY (¥)</option>
+                    <option value="AUD" data-symbol="A$" data-rate="1.52">🇦🇺 AUD (A$)</option>
+                    <option value="CAD" data-symbol="C$" data-rate="1.36">🇨🇦 CAD (C$)</option>
+                    <option value="CHF" data-symbol="CHF" data-rate="0.91">🇨🇭 CHF (CHF)</option>
+                    <option value="CNY" data-symbol="¥" data-rate="7.24">🇨🇳 CNY (¥)</option>
+                    <option value="SEK" data-symbol="kr" data-rate="10.83">🇸🇪 SEK (kr)</option>
+                    <option value="NZD" data-symbol="NZ$" data-rate="1.67">🇳🇿 NZD (NZ$)</option>
+                    <option value="MXN" data-symbol="$" data-rate="16.50">🇲🇽 MXN ($)</option>
+                    <option value="SGD" data-symbol="S$" data-rate="1.35">🇸🇬 SGD (S$)</option>
+                    <option value="HKD" data-symbol="HK$" data-rate="7.83">🇭🇰 HKD (HK$)</option>
+                    <option value="NOK" data-symbol="kr" data-rate="10.98">🇳🇴 NOK (kr)</option>
+                    <option value="KRW" data-symbol="₩" data-rate="1350.0">🇰🇷 KRW (₩)</option>
+                    <option value="TRY" data-symbol="₺" data-rate="32.0">🇹🇷 TRY (₺)</option>
+                    <option value="RUB" data-symbol="₽" data-rate="92.5">🇷🇺 RUB (₽)</option>
+                    <option value="BRL" data-symbol="R$" data-rate="5.12">🇧🇷 BRL (R$)</option>
+                    <option value="ZAR" data-symbol="R" data-rate="18.7">🇿🇦 ZAR (R)</option>
+                    <option value="AED" data-symbol="د.إ" data-rate="3.67">🇦🇪 AED (د.إ)</option>
+                    <option value="SAR" data-symbol="﷼" data-rate="3.75">🇸🇦 SAR (﷼)</option>
+                </select>
+            </li>
+        </ul>
+    </nav>
+
+    <section class="payment-section">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h2>Complete Your Booking</h2>
+                <p>Secure Checkout</p>
+            </div>
+            
+            <div class="summary-box" id="order-summary">
+                <p>Loading booking details...</p>
+            </div>
+
+            <div id="payment-selection" class="payment-selection">
+                <div class="method-card" onclick="selectMethod('card')">
+                    <i class="fas fa-credit-card"></i>
+                    <h3>Credit/Debit Card</h3>
+                </div>
+                <div class="method-card" onclick="selectMethod('upi')">
+                    <i class="fas fa-qrcode"></i>
+                    <h3>UPI (Paytm, PhonePe, GPay)</h3>
+                </div>
+                <div class="method-card" onclick="selectMethod('netbanking')">
+                    <i class="fas fa-university"></i>
+                    <h3>Net Banking</h3>
+                </div>
+            </div>
+
+            <form id="payment-form" class="hidden">
+                <button type="button" class="back-btn" onclick="backToSelection()"><i class="fas fa-arrow-left"></i> Back to Payment Options</button>
+                
+                <div id="cc-form" class="hidden">
+                    <div class="pay-form-group">
+                        <label>Cardholder Name</label>
+                        <input type="text" placeholder="John Doe" required id="cc-name">
+                    </div>
+                    <div class="pay-form-group">
+                        <label>Card Number</label>
+                        <input type="text" placeholder="XXXX XXXX XXXX XXXX" required maxlength="19" id="cc-num">
+                    </div>
+                    <div class="row">
+                        <div class="pay-form-group">
+                            <label>Expiry (MM/YY)</label>
+                            <input type="text" placeholder="MM/YY" required maxlength="5" id="cc-exp">
+                        </div>
+                        <div class="pay-form-group">
+                            <label>CVV</label>
+                            <input type="password" placeholder="123" required maxlength="3" id="cc-cvv">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="upi-form" class="hidden" style="text-align:center;">
+                    <div style="display:flex; justify-content:center; gap:15px; margin-bottom:1.5rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" height="25" alt="Paytm">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" height="25" alt="PhonePe">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" height="25" alt="Google Pay">
+                    </div>
+                    <p style="margin-bottom:1.5rem; color:#aaa; font-size:0.9rem;">Scan the QR code with any UPI app to pay.</p>
+                    <div style="margin-bottom:2rem; background: #fff; padding: 15px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=grandhotel@upi&pn=GrandHotel" alt="UPI QR Code" style="display: block;">
+                    </div>
+                    <div class="pay-form-group">
+                        <label>Or enter UPI ID manually</label>
+                        <input type="text" placeholder="example@upi">
+                    </div>
+                </div>
+
+                <div id="netbanking-form" class="hidden">
+                    <div class="pay-form-group">
+                        <label>Select Your Bank</label>
+                        <select style="width: 100%; padding: 0.8rem; background-color: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--light); border-radius: 4px; font-family: 'Outfit';">
+                            <option>HDFC Bank</option>
+                            <option>ICICI Bank</option>
+                            <option>State Bank of India (SBI)</option>
+                            <option>Axis Bank</option>
+                            <option>Kotak Mahindra Bank</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; font-size: 1.2rem; margin-top: 1rem;"><i class="fas fa-lock"></i> Confirm & Pay</button>
+            </form>
+            <div id="payment-message" class="hidden"></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo">Grand Boutique</div>
+            <p>123 Luxury Avenue, Metropolis</p>
+            <p>contact@grandboutique.com | +1 234 567 8900</p>
+        </div>
+    </footer>
+
+    <script>
+        const summaryBox = document.getElementById('order-summary');
+        
+        function renderCart() {
+            let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            if (cart.length === 0) {
+                summaryBox.innerHTML = '<p style="color:#e74c3c; text-align:center;">Your cart is empty.</p><div style="text-align:center; margin-top:20px;"><a href="index.html" class="btn-primary" style="text-decoration:none;">Search Rooms</a></div>';
+                document.getElementById('payment-form').classList.add('hidden');
+                document.getElementById('payment-selection').style.display = 'none';
+            } else {
+                const cRate = parseFloat(localStorage.getItem('currencyRate') || '1');
+                const cSymbol = localStorage.getItem('currencySymbol') || '$';
+                
+                let html = `<h3>Cart Summary (${cart.length} item${cart.length > 1 ? 's' : ''})</h3><hr style="border-color:#333; margin:10px 0;">`;
+                let total = 0;
+                
+                cart.forEach(item => {
+                    const itemTotal = item.basePrice * cRate;
+                    total += itemTotal;
+                    html += `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
+                            <span><strong>Room ${item.roomNumber}</strong> - ${item.category} <br>
+                            <small style="color:#aaa;">${item.checkin} to ${item.checkout}</small></span>
+                            <div style="text-align:right;">
+                                <div>${cSymbol}${itemTotal.toFixed(0)}</div>
+                                <button type="button" onclick="removeFromCart('${item.roomNumber}')" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:0.85rem; margin-top:5px; text-decoration:underline;"><i class="fas fa-trash"></i> Remove</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `<hr style="border-color:#333; margin:10px 0;">`;
+                html += `<div style="display:flex; justify-content:space-between; font-size:1.2rem; color:var(--primary);">
+                            <span><strong>Total:</strong></span>
+                            <span><strong>${cSymbol}${total.toFixed(0)}</strong></span>
+                         </div>`;
+                         
+                summaryBox.innerHTML = html;
+                document.getElementById('payment-form').classList.add('hidden');
+                document.getElementById('payment-selection').style.display = 'flex';
+            }
+        }
+        
+        function removeFromCart(roomNumber) {
+            let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            cart = cart.filter(i => i.roomNumber !== roomNumber);
+            localStorage.setItem('cartItems', JSON.stringify(cart));
+            renderCart();
+        }
+
+        renderCart();
+        
+        // Currency initialization and change logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const code = localStorage.getItem('currencyCode');
+            if (code) {
+                const selector = document.getElementById('currency-selector');
+                if (selector) selector.value = code;
+            }
+        });
+        
+        function changeCurrency() {
+            const selector = document.getElementById('currency-selector');
+            if (!selector) return;
+            const selectedOption = selector.options[selector.selectedIndex];
+            localStorage.setItem('currencyCode', selectedOption.value);
+            localStorage.setItem('currencySymbol', selectedOption.getAttribute('data-symbol'));
+            localStorage.setItem('currencyRate', parseFloat(selectedOption.getAttribute('data-rate')));
+        }
+
+        function selectMethod(method) {
+            document.getElementById('payment-selection').style.display = 'none';
+            document.getElementById('payment-form').classList.remove('hidden');
+            
+            document.getElementById('cc-form').classList.add('hidden');
+            document.getElementById('upi-form').classList.add('hidden');
+            document.getElementById('netbanking-form').classList.add('hidden');
+            
+            document.querySelectorAll('#cc-form input').forEach(i => i.required = false);
+            
+            if (method === 'card') {
+                document.getElementById('cc-form').classList.remove('hidden');
+                document.querySelectorAll('#cc-form input').forEach(i => i.required = true);
+            } else if (method === 'upi') {
+                document.getElementById('upi-form').classList.remove('hidden');
+            } else if (method === 'netbanking') {
+                document.getElementById('netbanking-form').classList.remove('hidden');
+            }
+        }
+        
+        function backToSelection() {
+            document.getElementById('payment-selection').style.display = 'flex';
+            document.getElementById('payment-form').classList.add('hidden');
+        }
+
+        document.getElementById('payment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msgDiv = document.getElementById('payment-message');
+            const submitBtn = e.target.querySelector('button');
+            
+            msgDiv.classList.remove('hidden');
+            msgDiv.className = 'message-success';
+            msgDiv.style.borderLeftColor = '#cba052';
+            msgDiv.style.background = 'rgba(203, 160, 82, 0.2)';
+            msgDiv.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing payment and connecting to booking system...`;
+            submitBtn.disabled = true;
+
+            try {
+                const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                let successCount = 0;
+                let bookingIds = [];
+                let totalPaid = 0;
+
+                for (let i = 0; i < cart.length; i++) {
+                    const item = cart[i];
+                    const response = await fetch('http://localhost:8085/api/book', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category: item.category, checkIn: item.checkin, checkOut: item.checkout })
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        successCount++;
+                        bookingIds.push(data.bookingId);
+                        totalPaid += data.totalTariff;
+                    } else {
+                        throw new Error(data.error || "Room no longer available");
+                    }
+                }
+                
+                const cRate = parseFloat(localStorage.getItem('currencyRate') || '1');
+                const cSymbol = localStorage.getItem('currencySymbol') || '$';
+                const cCode = localStorage.getItem('currencyCode') || 'USD';
+                const convertedTotal = (totalPaid * cRate).toFixed(2);
+                
+                msgDiv.style.borderLeftColor = '#2ecc71';
+                msgDiv.style.background = 'rgba(46, 204, 113, 0.2)';
+                msgDiv.innerHTML = `
+                    <h3 style="color:#2ecc71; margin-bottom: 10px; font-size: 1.5rem;"><i class="fas fa-check-circle"></i> Payment Successful!</h3>
+                    <p><strong>Successfully Booked:</strong> ${successCount} Room(s)</p>
+                    <p><strong>Booking IDs:</strong> ${bookingIds.join(', ')}</p>
+                    <p><strong>Total Paid:</strong> ${cSymbol}${convertedTotal} ${cCode}</p>
+                    <br>
+                    <a href="index.html" class="btn-secondary" style="text-decoration:none; display:inline-block; margin-top: 10px;">Return to Home</a>
+                `;
+                
+                document.getElementById('payment-form').style.display = 'none';
+                document.getElementById('order-summary').style.display = 'none';
+                document.getElementById('payment-selection').style.display = 'none';
+                localStorage.removeItem('cartItems');
+
+            } catch (err) {
+                msgDiv.style.borderLeftColor = '#e74c3c';
+                msgDiv.style.background = 'rgba(231, 76, 60, 0.2)';
+                msgDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Booking Error: ${err.message}`;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

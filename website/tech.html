@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Room Tech | The Grand Boutique Hotel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-tech {
+            height: 60vh;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('assets/deluxe_room.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .detail-section {
+            padding: 5rem 10%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .detail-section h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .detail-section p {
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 1px solid var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="background: var(--dark);">
+        <div class="logo">Grand Boutique</div>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#rooms">Rooms</a></li>
+            <li><a href="index.html#amenities">Amenities</a></li>
+            <li>
+                <select id="currency-selector" onchange="changeCurrency()" style="background:var(--dark); color:var(--light); border:1px solid var(--primary); border-radius:4px; padding:0.4rem; font-family:'Outfit'; outline:none; cursor:pointer;">
+                    <option value="USD" data-symbol="$" data-rate="1">🇺🇸 USD ($)</option>
+                    <option value="EUR" data-symbol="€" data-rate="0.92">🇪🇺 EUR (€)</option>
+                    <option value="GBP" data-symbol="£" data-rate="0.79">🇬🇧 GBP (£)</option>
+                    <option value="INR" data-symbol="₹" data-rate="83.50">🇮🇳 INR (₹)</option>
+                    <option value="JPY" data-symbol="¥" data-rate="151.20">🇯🇵 JPY (¥)</option>
+                    <option value="AUD" data-symbol="A$" data-rate="1.52">🇦🇺 AUD (A$)</option>
+                    <option value="CAD" data-symbol="C$" data-rate="1.36">🇨🇦 CAD (C$)</option>
+                    <option value="CHF" data-symbol="CHF" data-rate="0.91">🇨🇭 CHF (CHF)</option>
+                    <option value="CNY" data-symbol="¥" data-rate="7.24">🇨🇳 CNY (¥)</option>
+                    <option value="SEK" data-symbol="kr" data-rate="10.83">🇸🇪 SEK (kr)</option>
+                    <option value="NZD" data-symbol="NZ$" data-rate="1.67">🇳🇿 NZD (NZ$)</option>
+                    <option value="MXN" data-symbol="$" data-rate="16.50">🇲🇽 MXN ($)</option>
+                    <option value="SGD" data-symbol="S$" data-rate="1.35">🇸🇬 SGD (S$)</option>
+                    <option value="HKD" data-symbol="HK$" data-rate="7.83">🇭🇰 HKD (HK$)</option>
+                    <option value="NOK" data-symbol="kr" data-rate="10.98">🇳🇴 NOK (kr)</option>
+                    <option value="KRW" data-symbol="₩" data-rate="1350.0">🇰🇷 KRW (₩)</option>
+                    <option value="TRY" data-symbol="₺" data-rate="32.0">🇹🇷 TRY (₺)</option>
+                    <option value="RUB" data-symbol="₽" data-rate="92.5">🇷🇺 RUB (₽)</option>
+                    <option value="BRL" data-symbol="R$" data-rate="5.12">🇧🇷 BRL (R$)</option>
+                    <option value="ZAR" data-symbol="R" data-rate="18.7">🇿🇦 ZAR (R)</option>
+                    <option value="AED" data-symbol="د.إ" data-rate="3.67">🇦🇪 AED (د.إ)</option>
+                    <option value="SAR" data-symbol="﷼" data-rate="3.75">🇸🇦 SAR (﷼)</option>
+                </select>
+            </li>
+            <li><a href="index.html#booking" class="btn-book">Book Now</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero-tech">
+        <div class="hero-content" style="margin-top: 60px;">
+            <i class="fas fa-mobile-alt" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+            <h1>Smart Room Tech</h1>
+        </div>
+    </header>
+
+    <section class="detail-section">
+        <h2>About The Experience</h2>
+        <p>Our rooms are equipped with the latest in smart technology for an effortless stay. Control ambient lighting, motorized curtains, climate control, and our immersive entertainment systems directly from a complimentary in-room tablet.</p>
+        <p>Voice commands and personalized profiles ensure that the room adapts to your preferences the moment you step through the door.</p>
+        <a href="index.html#amenities" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Amenities</a>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo">Grand Boutique</div>
+            <p>123 Luxury Avenue, Metropolis</p>
+            <p>contact@grandboutique.com | +1 234 567 8900</p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const code = localStorage.getItem('currencyCode');
+            if (code) {
+                const selector = document.getElementById('currency-selector');
+                if (selector) selector.value = code;
+            }
+        });
+        function changeCurrency() {
+            const selector = document.getElementById('currency-selector');
+            if (!selector) return;
+            const selectedOption = selector.options[selector.selectedIndex];
+            localStorage.setItem('currencyCode', selectedOption.value);
+            localStorage.setItem('currencySymbol', selectedOption.getAttribute('data-symbol'));
+            localStorage.setItem('currencyRate', parseFloat(selectedOption.getAttribute('data-rate')));
+        }
+    </script>
+</body>
+</html>
