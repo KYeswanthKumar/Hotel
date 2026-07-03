@@ -115,7 +115,7 @@
             }
 
             try {
-                const res = await fetch(`http://localhost:8085/api/availability?checkIn=${checkin}&checkOut=${checkout}`);
+                const res = await fetch(`/api/availability?checkIn=${checkin}&checkOut=${checkout}`);
                 const data = await res.json();
                 
                 if (!data.available || !data.rooms || data.rooms.length === 0) {

@@ -50,11 +50,35 @@ public class Server {
         server.createContext("/api/book", new BookingHandler());
         server.createContext("/api/send-otp", new OtpHandler());
         
-        // Handle CORS
+        // Serve static files and handle CORS
         server.createContext("/", exchange -> {
             setCORS(exchange);
             if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
                 exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+            
+            String path = exchange.getRequestURI().getPath();
+            if (path.equals("/")) {
+                path = "/index.html";
+            }
+            
+            java.io.File file = new java.io.File("website" + path);
+            if (file.exists() && !file.isDirectory()) {
+                String mime = "text/plain";
+                if (path.endsWith(".html")) mime = "text/html";
+                else if (path.endsWith(".css")) mime = "text/css";
+                else if (path.endsWith(".js")) mime = "application/javascript";
+                else if (path.endsWith(".png")) mime = "image/png";
+                else if (path.endsWith(".jpg") || path.endsWith(".jpeg")) mime = "image/jpeg";
+                else if (path.endsWith(".svg")) mime = "image/svg+xml";
+                
+                exchange.getResponseHeaders().set("Content-Type", mime);
+                exchange.sendResponseHeaders(200, file.length());
+                try (java.io.OutputStream os = exchange.getResponseBody();
+                     java.io.FileInputStream fs = new java.io.FileInputStream(file)) {
+                    fs.transferTo(os);
+                }
             } else {
                 exchange.sendResponseHeaders(404, -1);
             }

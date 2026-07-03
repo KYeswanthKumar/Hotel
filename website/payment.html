@@ -378,7 +378,7 @@
 
                 for (let i = 0; i < cart.length; i++) {
                     const item = cart[i];
-                    const response = await fetch('http://localhost:8085/api/book', {
+                    const response = await fetch('/api/book', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ category: item.category, checkIn: item.checkin, checkOut: item.checkout })
