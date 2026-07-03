@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const { kv } = require('@vercel/kv');
+const { Redis } = require('@upstash/redis');
+const kv = Redis.fromEnv();
 
 const app = express();
 app.use(cors());
