@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Redis } = require('@upstash/redis');
-const kv = Redis.fromEnv();
+const { Pool } = require('@neondatabase/serverless');
 
 const app = express();
 app.use(cors());
@@ -21,25 +20,34 @@ const defaultRooms = [
     { roomNumber: "702", category: "Economy", bookings: [], basePrice: 40 },
 ];
 
+let pool;
+if (process.env.DATABASE_URL) {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+}
+
 async function getRooms() {
+    if (!pool) return defaultRooms;
     try {
-        let rooms = await kv.get('hotel_rooms');
-        if (!rooms) {
-            await kv.set('hotel_rooms', defaultRooms);
-            rooms = defaultRooms;
+        await pool.query('CREATE TABLE IF NOT EXISTS hotel_state (id INT PRIMARY KEY, data JSONB)');
+        const res = await pool.query('SELECT data FROM hotel_state WHERE id = 1');
+        if (res.rows.length > 0) {
+            return res.rows[0].data;
+        } else {
+            await pool.query('INSERT INTO hotel_state (id, data) VALUES (1, $1)', [JSON.stringify(defaultRooms)]);
+            return defaultRooms;
         }
-        return rooms;
     } catch (e) {
-        console.error("KV Error, falling back to default rooms", e);
+        console.error("Neon DB Error in getRooms:", e);
         return defaultRooms;
     }
 }
 
 async function updateRooms(rooms) {
+    if (!pool) return;
     try {
-        await kv.set('hotel_rooms', rooms);
+        await pool.query('UPDATE hotel_state SET data = $1 WHERE id = 1', [JSON.stringify(rooms)]);
     } catch (e) {
-        console.error("KV Error saving rooms", e);
+        console.error("Neon DB Error in updateRooms:", e);
     }
 }
 
@@ -89,7 +97,7 @@ app.post('/api/book', async (req, res) => {
         const roomIndex = rooms.findIndex(r => r.roomNumber === roomToBook.roomNumber);
         
         rooms[roomIndex].bookings.push({ checkIn, checkOut });
-        await updateRooms(rooms);
+        await updateRooms(rooms); // Save to Neon DB
         
         const inDate = new Date(checkIn);
         const outDate = new Date(checkOut);
