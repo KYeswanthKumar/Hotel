@@ -113,7 +113,7 @@ app.post('/api/book', async (req, res) => {
             totalTariff: totalTariff
         });
     } else {
-        res.status(400).json({ success: false, error: "No rooms available in this category for these dates." });
+        res.status(400).json({ success: false, error: "Sorry, this room was just booked by someone else! Please search for another room." });
     }
 });
 
